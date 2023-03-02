@@ -1,4 +1,3 @@
-import axios, {AxiosInstance} from 'axios'
 import md5 from 'md5'
 import {NewOrderStatus, Order} from "./types";
 
@@ -29,6 +28,7 @@ export class Util {
                 method: 'post',
                 headers: this.headers
             })
+            console.log(await resp.text())
             let data = JSON.parse(await resp.text())
             return {data, code: resp.status}
         }
