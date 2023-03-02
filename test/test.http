@@ -1,0 +1,19 @@
+
+POST http://127.0.0.1:8788/api/hello
+Content-Type: application/json
+Auth: Beare 0112.
+
+{
+  "hi": "233"
+}
+
+###
+GET http://127.0.0.1:8788/api/user?user=20191953&pwd=800518
+Accept: application/json
+
+###
+
+POST http://ligong.deshineng.com:8082/brmclg/api/logon/login?time=1677496788692
+Content-Type: application/json
+
+{"code":"20191953","password":"2e4d7672fe3571f59df8448384ec8b29"}

@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    font-family:  Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    background-color: #F6F6F6;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+}
+
+a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+}
+
+a:hover {
+    color: #535bf2;
+}
+
+body {
+    margin: 0;
+}
+
+/* CDN 服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+    font-family: "阿里巴巴普惠体 2.0 45 Light";
+    font-weight: 300;
+    src: url('//at.alicdn.com/wf/webfont/dQVKLvxiHJGL/f9gVaOXL5LEl7kVxCwqRu.woff2') format("woff2"),
+    url("//at.alicdn.com/wf/webfont/dQVKLvxiHJGL/KdJW3nJcUjdeqh2pgYM29.woff") format("woff");
+    font-display: swap;
+}
+
+
