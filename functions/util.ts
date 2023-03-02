@@ -12,7 +12,7 @@ export class Util {
             let url = this.baseURL + ((!this.baseURL.endsWith('/') && !path.startsWith('/')) ? '/' : '') + path;
 
             let _url = new URL(url);
-            if(params){
+            if (params) {
                 for (let key in params) {
                     _url.searchParams.append(key, params[key])
                 }
@@ -28,7 +28,7 @@ export class Util {
                 method: 'post',
                 headers: this.headers
             })
-            console.log(await resp.text())
+            console.log({url, body, resp: await resp.text()})
             let data = JSON.parse(await resp.text())
             return {data, code: resp.status}
         }
