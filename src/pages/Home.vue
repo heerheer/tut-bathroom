@@ -27,7 +27,7 @@
 
     <ha-card class="h-28"
              v-if="userStore.isLogin()"
-             :title="userOrder.orders.length==0?'所有预约已完成!':'你还有预约未完成!'"
+             :title="userOrder.orders.filter(x=>x.status=='0').length==0?'所有预约已完成!':'你还有预约未完成!'"
     >
       <template v-slot:icon>
         <bath class="fill-indigo-600"/>
@@ -74,12 +74,18 @@
                     </div>
                   </div>
                   <button
-                      v-if="order.status !=='3'"
+                      v-if="order.status =='0'"
                       @click="cancelOrder(order.id)"
                       class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600">取消
                   </button>
-                  <div v-else>
+                  <div v-else-if="order.status =='3'">
                     <span class="px-1 text-sm text-secondary">已过期</span>
+                  </div>
+                  <div v-else-if="order.status =='2'">
+                    <span class="px-1 text-sm text-secondary">已完成</span>
+                  </div>
+                  <div v-else-if="order.status =='1'">
+                    <span class="px-1 text-sm text-secondary">已扫码</span>
                   </div>
                 </div>
 
@@ -108,7 +114,8 @@
     </ha-card>
 
 
-    <transition leave-active-class="animate__animated animate__bounceOut">
+    <transition appear appear-active-class="animate__animated animate__bounceIn"
+                leave-active-class="animate__animated animate__bounceOut">
       <ha-card
           appear="shake"
           v-if="userLocalStore.default_room==''"
@@ -163,7 +170,6 @@
       </template>
     </ha-card>
 
-
   </div>
 </template>
 
@@ -185,6 +191,7 @@ import * as userUtil from "../utils/userUtil";
 import {getRoomList} from "../utils/userUtil";
 import Exclamation from "../icons/Exclamation.vue";
 import Check from "../icons/Check.vue";
+import {pngBase64ToBlob} from "../utils/picUtil";
 
 
 const router = useRouter()
@@ -196,7 +203,8 @@ const showQRCode = async () => {
 
   let pic = await userUtil.getQRCodeUrl();
   if (pic != '') {
-    showImagePreview([pic]);
+    let url = URL.createObjectURL(pngBase64ToBlob(pic))
+    showImagePreview([url]);
   }
 }
 
@@ -209,6 +217,7 @@ const getUserOrders = async () => {
 const autoLogin = async () => {
   //auto login
   let userInfo = JSON.parse(localStorage.user ?? '{}');
+  console.log(userInfo)
   if (!userInfo.account) {
     await router.push('/login')
   } else {
@@ -227,14 +236,16 @@ const quickOrder = async () => {
   if (!result) {
     if (reason == 'room-undefined') {
       //设置快速房间
+      showFailToast({message: '没有可预约的浴室啦!'})
+      return;
     }
     if (reason == 'room-error') {
       //设置快速房间
       showFailToast({message: '房间参数错误'})
+      return;
     }
   }
-  console.log(result, reason)
-  getUserOrders()
+  await getUserOrders()
 
 }
 

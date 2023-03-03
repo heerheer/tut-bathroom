@@ -2,9 +2,10 @@ import axios from "axios";
 import dayjs from "dayjs";
 import {userLocalStore, userStore} from "../stores/userStore";
 
+axios.defaults.baseURL = "https://tut-bathroom-api.deno.dev"
 
 export const login = async (account: { user: string, pwd: string }) => {
-    let {data} = await axios.get('/api/user', {params: account})
+    let {data} = await axios.post('/api/user', account)
     if (data.token) {
         return {token: data.token, loginid: data.loginid}
     } else {
@@ -13,16 +14,16 @@ export const login = async (account: { user: string, pwd: string }) => {
 }
 
 export const getQRCodeUrl = async () => {
-    let {data} = await axios.get('/api/qrcode', {
+    let {data} = await axios.get('/api/user/qrcode', {
         headers: {
             'token': userStore.token,
             'loginid': userStore.loginid
         }
     })
-    return data.pic
+    return data.data
 }
 export const getUserOrders = async () => {
-    let {data} = await axios.get('/api/order', {
+    let {data} = await axios.get('/api/user', {
         headers: {
             'token': userStore.token,
             'loginid': userStore.loginid
@@ -42,7 +43,7 @@ export const getRoomList = async () => {
 }
 
 export const getBooks = async (room: number) => {
-    let {data} = await axios.get('/api/book', {
+    let {data} = await axios.get('/api/room/' + room, {
         params: {id: room},
         headers: {
             'token': userStore.token,
@@ -52,7 +53,9 @@ export const getBooks = async (room: number) => {
     return data.books
 }
 export const order = async (id: number) => {
-    let {data} = await axios.post('/api/order?id=' + id, {}, {
+    let {data} = await axios.post('/api/order', {
+        id
+    }, {
         headers: {
             'token': userStore.token,
             'loginid': userStore.loginid
@@ -62,11 +65,12 @@ export const order = async (id: number) => {
 }
 
 export const cancel = async (id: number) => {
-    let {data} = await axios.delete('/api/order?id=' + id,  {
+    let {data} = await axios.delete('/api/order', {
         headers: {
             'token': userStore.token,
             'loginid': userStore.loginid
-        }
+        },
+        data: {id}
     })
     return data
 }
@@ -99,7 +103,7 @@ export const orderCurrentTime = async () => {
         const result = await order(book.id);
 
         if (result?.result) {
-            console.log({message: '预约成功!\n' + dayjs(result.start).format('HH:mm:ss')+ '-' + dayjs(result.end).format('HH:mm:ss')})
+            console.log({message: '预约成功!\n' + dayjs(result.start).format('HH:mm:ss') + '-' + dayjs(result.end).format('HH:mm:ss')})
             //await refreshData();
             return {result: true, reason: ''}
 
